@@ -38,6 +38,17 @@ export const naiveThemeOverrides = {
 }
 
 export const basePermissions = [
+  // {
+  //   code: 'Navigation',
+  //   name: '导航管理',
+  //   type: 'MENU',
+  //   path: '/navigation',
+  //   component: '/src/views/demo/navigation/index.vue',
+  //   icon: 'i-fe:compass',
+  //   order: 10,
+  //   enable: true,
+  //   show: true,
+  // },
   {
     code: 'ExternalLink',
     name: '外链',
