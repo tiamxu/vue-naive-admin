@@ -7,8 +7,8 @@ export default {
   create(data) {
     return request.post('/links', data)
   },
-  update(id, data) {
-    return request.put(`/links/${id}`, data)
+  update(data) {
+    return request.put(`/links/${data.id}`, data)
   },
   delete(id) {
     return request.delete(`/links/${id}`)

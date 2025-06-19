@@ -93,21 +93,23 @@ async function getData(params) {
     console.log('Request params:', params)
     const res = await api.read(params)
     console.log('API response:', res)
-    
+    const rawItems = res?.data || []
+
     // 转换分组数据为平铺格式
     let items = []
-    if (res?.data && Array.isArray(res.data)) {
-      items = res.data.map(item => ({
-        id: item?.ID,
-        title: item?.Title || '无标题',
-        url: item?.URL || '#',
-        category: item?.Category || '未分类',
-        description: item?.Description || '',
-        createdAt: item?.CreatedAt,
-        updatedAt: item?.UpdatedAt
+    if (res?.data.pageData  && Array.isArray(res.data.pageData )) {
+      items = res.data.pageData.map(item => ({
+        id: item?.id,
+        title: item?.title || '无标题',
+        url: item?.url || '#',
+        category: item?.category || '未分类',
+        description: item?.description || '',
+        createdAt: item?.created_at,
+        updatedAt: item?.updated_at
       }))
     }
-    
+    console.log('Processed data:', { rawItems, total: res?.data?.total || 0 }) // 3. 检查处理后的数据
+
     return { 
       items,
       total: items.length 
@@ -126,6 +128,18 @@ const columns = [
     key: 'category', 
     width: 150,
     render: (row) => h(NTag, { type: 'info' }, { default: () => row.category || '未分类' })
+  },
+  { 
+    title: '上架时间', 
+    key: 'createdAt', 
+    width: 180,
+    render: (row) => formatDate(row.created_at)
+  },
+    { 
+    title: '更新时间', 
+    key: 'updatedAt', 
+    width: 180,
+    render: (row) => formatDate(row.updated_at)
   },
   {
     title: '操作',
@@ -176,4 +190,14 @@ const {
   doUpdate: api.update,
   refresh: () => $table.value?.handleSearch(),
 })
+
+function formatDate(dateString) {
+  if (!dateString) return '无'
+  try {
+    const date = new Date(dateString)
+    return isNaN(date.getTime()) ? dateString : date.toLocaleString()
+  } catch {
+    return dateString
+  }
+}
 </script>
