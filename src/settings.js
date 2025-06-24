@@ -58,16 +58,16 @@ export const basePermissions = [
     enable: true,
     show: true,
     children: [
-      {
-        code: 'MyBlog',
-        name: '博客-掘金',
-        type: 'MENU',
-        path: 'https://juejin.cn/user/1961184475483255',
-        icon: 'i-simple-icons:juejin',
-        order: 1,
-        enable: true,
-        show: true,
-      },
+      // {
+      //   code: 'MyBlog',
+      //   name: '博客-掘金',
+      //   type: 'MENU',
+      //   path: 'https://juejin.cn/user/1961184475483255',
+      //   icon: 'i-simple-icons:juejin',
+      //   order: 1,
+      //   enable: true,
+      //   show: true,
+      // },
     ],
   },
 ]

@@ -167,15 +167,24 @@ const required = {
   trigger: ['blur', 'change'],
 }
 
-const defaultForm = { enable: true, show: true }
+const defaultForm = { enable: true, show: true,keepAlive: false }
 const [modalFormRef, modalForm, validation] = useForm(defaultForm)
 const [modalRef, okLoading] = useModal()
 
 const modalAction = ref('')
+
 function handleOpen(options = {}) {
   const { action, row = {}, ...rest } = options
   modalAction.value = action
-  modalForm.value = { ...row }
+  // modalForm.value = { ...row }
+  modalForm.value = {
+    ...defaultForm,
+    ...row,
+    // 确保布尔值正确处理
+    enable: row.enable !== undefined ? Boolean(row.enable) : defaultForm.enable,
+    show: row.show !== undefined ? Boolean(row.show) : defaultForm.show,
+    keepAlive: row.keepAlive !== undefined ? Boolean(row.keepAlive) : defaultForm.keepAlive
+  }
   modalRef.value.open({ ...rest, onOk: onSave })
 }
 
@@ -183,15 +192,30 @@ async function onSave() {
   await validation()
   okLoading.value = true
   try {
-    if (!modalForm.value.parentId) modalForm.value.parentId = null
+    // if (!modalForm.value.parentId) modalForm.value.parentId = null
+    // if (modalAction.value === 'add') {
+    //   await api.addPermission(modalForm.value)
+    // } else if (modalAction.value === 'edit') {
+    //   await api.savePermission(modalForm.value.id, modalForm.value)
+    // }
+    const formData = {
+      ...modalForm.value,
+      show: modalForm.value.show ? 1 : 0,
+      enable: modalForm.value.enable ? 1 : 0,
+      keepAlive: modalForm.value.keepAlive ? 1 : 0
+    }
+    
+    if (!formData.parentId) formData.parentId = null
     if (modalAction.value === 'add') {
-      await api.addPermission(modalForm.value)
+      await api.addPermission(formData)
     } else if (modalAction.value === 'edit') {
-      await api.savePermission(modalForm.value.id, modalForm.value)
+      await api.savePermission(formData.id, formData)
     }
     okLoading.value = false
     $message.success('保存成功')
-    emit('refresh', modalForm.value)
+    // emit('refresh', modalForm.value)
+        emit('refresh', formData)  // 传递转换后的数据
+
   } catch (error) {
     console.error(error)
     okLoading.value = false

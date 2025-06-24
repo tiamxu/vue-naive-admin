@@ -92,11 +92,21 @@ initData()
 const currentMenu = ref(null)
 
 const modalRef = ref(null)
-function handleEdit(item = {}) {
+// function handleEdit(item = {}) {
+//   modalRef.value?.handleOpen({
+//     action: 'edit',
+//     title: '编辑菜单 - ' + item.name,
+//     row: item,
+//     okText: '保存',
+//   })
+// }
+
+function handleEdit(item) {
+  if (!item) return
   modalRef.value?.handleOpen({
     action: 'edit',
     title: '编辑菜单 - ' + item.name,
-    row: item,
+    row: { ...item }, // 创建新对象避免引用问题
     okText: '保存',
   })
 }
