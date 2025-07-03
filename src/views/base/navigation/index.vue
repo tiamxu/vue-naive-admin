@@ -78,6 +78,8 @@ import { NButton, NTag } from 'naive-ui'
 import { MeCrud, MeQueryItem, MeModal } from '@/components'
 import { useCrud } from '@/composables'
 import api from './api'
+import { formatDate } from '@/utils/date'
+ 
 
 defineOptions({ name: 'NavigationMgt' })
 
@@ -191,13 +193,13 @@ const {
   refresh: () => $table.value?.handleSearch(),
 })
 
-function formatDate(dateString) {
-  if (!dateString) return '无'
-  try {
-    const date = new Date(dateString)
-    return isNaN(date.getTime()) ? dateString : date.toLocaleString()
-  } catch {
-    return dateString
-  }
-}
+// function formatDate(dateString) {
+//   if (!dateString) return '无'
+//   try {
+//     const date = new Date(dateString)
+//     return isNaN(date.getTime()) ? dateString : date.toLocaleString()
+//   } catch {
+//     return dateString
+//   }
+// }
 </script>
