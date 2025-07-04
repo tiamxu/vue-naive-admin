@@ -13,6 +13,8 @@
       :scroll-x="1200"
       :columns="columns"
       :get-data="api.read"
+      :loading="loading"
+      :error="error"
     >
       <MeQueryItem label="标题" :label-width="50">
         <n-input
@@ -31,6 +33,15 @@
           placeholder="请输入分类"
           clearable
           @keydown.enter="() => $table?.handleSearch"
+        />
+      </MeQueryItem>
+
+      <MeQueryItem label="状态" :label-width="80">
+        <n-select
+          v-model:value="queryItems.status"
+          placeholder="请选择状态"
+          :options="statusOptions"
+          clearable
         />
       </MeQueryItem>
     </MeCrud>
@@ -68,6 +79,12 @@
         <n-form-item label="分类" path="category">
           <n-input v-model:value="modalForm.category" />
         </n-form-item>
+        <n-form-item label="状态" path="status">
+          <n-radio-group v-model:value="modalForm.status">
+            <n-radio :value="1">启用</n-radio>
+            <n-radio :value="0">禁用</n-radio>
+          </n-radio-group>
+        </n-form-item>
       </n-form>
     </MeModal>
   </CommonPage>
@@ -84,52 +101,74 @@ import { formatDate } from '@/utils/date'
 defineOptions({ name: 'NavigationMgt' })
 
 const $table = ref(null)
-const queryItems = ref({})
+const queryItems = ref({
+  title: '',
+  category: '',
+  status: null
 
+})
+const statusOptions = [
+  { label: '启用', value: 1 },
+  { label: '禁用', value: 0 }
+]
 onMounted(() => {
   $table.value?.handleSearch()
 })
+const loading = ref(false)
+const error = ref(null)
+// async function getData(params) {
+//   try {
+//     console.log('Request params:', params)
+//     const res = await api.read(params)
+//     console.log('API response:', res)
+//     const rawItems = res?.data || []
 
-async function getData(params) {
-  try {
-    console.log('Request params:', params)
-    const res = await api.read(params)
-    console.log('API response:', res)
-    const rawItems = res?.data || []
+//     // 转换分组数据为平铺格式
+//     let items = []
+//     if (res?.data.pageData  && Array.isArray(res.data.pageData )) {
+//       items = res.data.pageData.map(item => ({
+//         id: item?.id,
+//         title: item?.title || '无标题',
+//         url: item?.url || '#',
+//         category: item?.category || '未分类',
+//         description: item?.description || '',
+//         createdAt: item?.created_at,
+//         updatedAt: item?.updated_at
+//       }))
+//     }
+//     console.log('Processed data:', { rawItems, total: res?.data?.total || 0 }) // 3. 检查处理后的数据
 
-    // 转换分组数据为平铺格式
-    let items = []
-    if (res?.data.pageData  && Array.isArray(res.data.pageData )) {
-      items = res.data.pageData.map(item => ({
-        id: item?.id,
-        title: item?.title || '无标题',
-        url: item?.url || '#',
-        category: item?.category || '未分类',
-        description: item?.description || '',
-        createdAt: item?.created_at,
-        updatedAt: item?.updated_at
-      }))
-    }
-    console.log('Processed data:', { rawItems, total: res?.data?.total || 0 }) // 3. 检查处理后的数据
-
-    return { 
-      items,
-      total: items.length 
-    }
-  } catch (error) {
-    console.error('Failed to load data:', error)
-    return { items: [], total: 0 }
-  }
-}
+//     return { 
+//       items,
+//       total: items.length 
+//     }
+//   } catch (error) {
+//     console.error('Failed to load data:', error)
+//     return { items: [], total: 0 }
+//   }
+// }
 
 const columns = [
   { title: '标题', key: 'title', width: 200, ellipsis: { tooltip: true } },
-  { title: 'URL', key: 'url', width: 300, ellipsis: { tooltip: true } },
+  { title: '链接', key: 'url', width: 300, ellipsis: { tooltip: true } },
   { 
     title: '分类', 
     key: 'category', 
     width: 150,
     render: (row) => h(NTag, { type: 'info' }, { default: () => row.category || '未分类' })
+  },
+  { 
+    title: '状态', 
+    key: 'status', 
+    width: 100,
+    render: (row) => h(
+      NTag,
+      { 
+        type: row.status === 1 ? 'success' : 'error',
+        bordered: false
+      },
+      { default: () => row.status === 1 ? '启用' : '禁用' }
+    )
   },
   { 
     title: '上架时间', 
@@ -193,13 +232,4 @@ const {
   refresh: () => $table.value?.handleSearch(),
 })
 
-// function formatDate(dateString) {
-//   if (!dateString) return '无'
-//   try {
-//     const date = new Date(dateString)
-//     return isNaN(date.getTime()) ? dateString : date.toLocaleString()
-//   } catch {
-//     return dateString
-//   }
-// }
 </script>

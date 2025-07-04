@@ -17,34 +17,3 @@ export default {
   savePermission: (id, data) => request.patch(`/permission/${id}`, data),
   deletePermission: (id) => request.delete(`permission/${id}`),
 }
-
-
-// 在api.js中添加
-axios.interceptors.request.use(config => {
-  if (config.data) {
-    config.data = convertBoolProperties(config.data)
-  }
-  return config
-})
-
-function convertBoolProperties(obj) {
-  if (typeof obj !== 'object' || obj === null) return obj
-  
-  if (Array.isArray(obj)) {
-    return obj.map(convertBoolProperties)
-  }
-  
-  const result = {}
-  for (const key in obj) {
-    if (obj[key] === true) {
-      result[key] = 1
-    } else if (obj[key] === false) {
-      result[key] = 0
-    } else if (typeof obj[key] === 'object') {
-      result[key] = convertBoolProperties(obj[key])
-    } else {
-      result[key] = obj[key]
-    }
-  }
-  return result
-}

@@ -12,7 +12,8 @@
       v-model:query-items="queryItems"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.read"
+     :get-data="api.read"
+
       :loading="loading"
       :error="error"
     >
@@ -130,41 +131,41 @@ onMounted(() => {
 const loading = ref(false)
 const error = ref(null)
 
-async function getData(params) {
-  try {
-        loading.value = true
-    error.value = null
-    console.log('Request params:', params)
-    const res = await api.read(params)
-    console.log('API response data structure:', res.data)
+// async function getData(params) {
+//   try {
+//         loading.value = true
+//     error.value = null
+//     console.log('Request params:', params)
+//     const res = await api.read(params)
+//     console.log('API response data structure:', res.data)
 
 
-    let items = []
-    if (res?.data.pageData && Array.isArray(res.data.pageData)) {
-      items = res.data.pageData.map(item => ({
-        id: item?.id,
-        name: item?.name || '未命名',
-        code: item?.code || '',
-        description: item?.description || '',
-        status: item?.status ?? 1,
-        createdAt: item?.created_at,
-        updatedAt: item?.updated_at
-      }))
-    }
-    console.log('Processed data:', { items, total: res?.data?.total || 0 }) // 3. 检查处理后的数据
+//     let items = []
+//     if (res?.data.pageData && Array.isArray(res.data.pageData)) {
+//       items = res.data.pageData.map(item => ({
+//         id: item?.id,
+//         name: item?.name || '未命名',
+//         code: item?.code || '',
+//         description: item?.description || '',
+//         status: item?.status ?? 1,
+//         createdAt: item?.created_at,
+//         updatedAt: item?.updated_at
+//       }))
+//     }
+//     console.log('Processed data:', { items, total: res?.data?.total || 0 }) // 3. 检查处理后的数据
 
-    return { 
-      items,
-      total: items.length 
-    }
-  } catch (error) {
-    error.value = err.message
-    console.error('Failed to load data:', error)
-    return { items: [], total: 0 }
-  }finally {
-    loading.value = false
-  }
-}
+//     return { 
+//       items,
+//       total: items.length 
+//     }
+//   } catch (error) {
+//     error.value = err.message
+//     console.error('Failed to load data:', error)
+//     return { items: [], total: 0 }
+//   }finally {
+//     loading.value = false
+//   }
+// }
 
 const columns = [
   { 
